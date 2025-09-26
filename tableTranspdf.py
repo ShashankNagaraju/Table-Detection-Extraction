@@ -66,16 +66,12 @@ def render_pdf_to_images(pdf_path, dpi=300):
         yield pno, img
     doc.close()
 
-
-# ---- Load detection model ----
 device = torch.device("cuda" if USE_GPU else "cpu")
 det_processor = AutoImageProcessor.from_pretrained(DET_MODEL)
 det_model = TableTransformerForObjectDetection.from_pretrained(DET_MODEL).to(device).eval()
 
-# ---- Load PaddleOCR structure model ----
 pipeline = PPStructureV3(device="gpu" if USE_GPU else "cpu")
 
-# ---- Handle input ----
 suffix = Path(INPUT_FILE).suffix.lower()
 if suffix == ".pdf":
     pages = render_pdf_to_images(INPUT_FILE, dpi=PDF_RENDER_DPI)
@@ -84,7 +80,6 @@ else:
     pages = [(0, img)]
 
 
-# ---- Detect tables per page ----
 for page_idx, page_img in pages:
     W, H = page_img.size
     dpi = infer_image_dpi(page_img, default=DEFAULT_DPI)
@@ -115,7 +110,6 @@ for page_idx, page_img in pages:
         crop_img.save(crop_path)
         print(f"Page {page_idx} - Table {i} cropped: {crop_path} (score={sc:.3f})")
 
-        # ---- Parse with PaddleOCR ----
         output = pipeline.predict(crop_path)
         for j, res in enumerate(output):
             res.print()
