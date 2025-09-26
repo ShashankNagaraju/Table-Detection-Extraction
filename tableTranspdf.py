@@ -6,8 +6,8 @@ import fitz
 from transformers import AutoImageProcessor, TableTransformerForObjectDetection
 from paddleocr import PPStructureV3
 
-INPUT_FILE  = r""   
-OUT_DIR     = r""
+INPUT_FILE  = r" "   
+OUT_DIR     = r" "
 DET_MODEL   = "microsoft/table-transformer-detection"
 DET_THRESH  = 0.7
 EXPAND_CM   = 0.30
